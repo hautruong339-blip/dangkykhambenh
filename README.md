@@ -1,1 +1,0 @@
-# ti-p-nh-n-kh-m-b-nh

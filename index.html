@@ -7,121 +7,178 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Toàn bộ dùng font Times New Roman */
-        body, input, select, textarea, button { 
+        body { 
             font-family: 'Times New Roman', Times, serif !important; 
+            background-image: url('N%E1%BB%90N.jpg'); 
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
         }
-        body { background-color: #f1f5f9; }
-        
-        .input-animated { border: 1.5px solid #e2e8f0; transition: all 0.3s; }
-        .input-animated:focus { border-color: #2563eb; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1); outline: none; }
-        
-        .option-box { cursor: pointer; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 12px; transition: 0.2s; text-align: center; font-size: 1.1rem; background: white; }
-        input[type="radio"]:checked + .option-box { border-color: #2563eb; background: #eff6ff; font-weight: bold; color: #2563eb; }
+
+        /* Lớp nền phủ mờ sang trọng giống trang Admin */
+        .glass-overlay {
+            background: rgba(241, 245, 249, 0.7);
+            min-height: 100vh;
+            padding: 40px 16px;
+        }
+
+        /* Hiệu ứng nổi khối sâu cho Form đăng ký */
+        .neumorphic-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                20px 20px 60px rgba(0, 0, 0, 0.15), 
+                -10px -10px 30px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Ô nhập liệu nổi khối chìm (Inner Shadow) */
+        .input-neumorphic {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05);
+        }
+        .input-neumorphic:focus {
+            border-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.1);
+            outline: none;
+        }
+
+        /* Lựa chọn Radio nổi khối */
+        .option-box {
+            cursor: pointer;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 12px;
+            transition: 0.3s;
+            text-align: center;
+            font-size: 1.1rem;
+            background: white;
+            box-shadow: 4px 4px 8px rgba(0,0,0,0.05);
+        }
+        input[type="radio"]:checked + .option-box {
+            border-color: #2563eb;
+            background: #eff6ff;
+            font-weight: bold;
+            color: #2563eb;
+            transform: scale(0.98);
+            box-shadow: inset 3px 3px 7px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Nút bấm nổi khối mạnh mẽ */
+        .btn-submit {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        .btn-submit:active {
+            transform: scale(0.96);
+            box-shadow: inset 2px 2px 10px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
-<body class="py-10 px-4">
-    <div class="max-w-2xl mx-auto bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden">
-        <div class="p-8 text-center bg-slate-50 border-b">
-            <h1 class="text-3xl font-bold text-slate-900 mb-1 uppercase tracking-tight italic">Đăng Ký Khám Bệnh</h1>
-            <p class="text-blue-600 font-bold text-sm italic uppercase tracking-widest">BV Ung Bướu TP.HCM - Cơ Sở 2</p>
-        </div>
-
-        <form id="medicalForm" class="px-10 py-8 space-y-6" onsubmit="handleFinalSubmit(event)">
-            
-            <div>
-                <label class="text-base font-bold text-slate-700 uppercase mb-3 block italic">Đã từng khám tại BV Ung Bướu chưa? *</label>
-                <div class="grid grid-cols-2 gap-3">
-                    <label onclick="toggleMedIdField(true)" class="relative"><input type="radio" name="oldPatient" value="Có" class="absolute opacity-0 w-full h-full cursor-pointer"><div class="option-box">Có</div></label>
-                    <label onclick="toggleMedIdField(false)" class="relative"><input type="radio" name="oldPatient" value="Không" checked class="absolute opacity-0 w-full h-full cursor-pointer"><div class="option-box">Không</div></label>
-                </div>
+<body>
+    <div class="glass-overlay">
+        <div class="max-w-2xl mx-auto neumorphic-card overflow-hidden">
+            <div class="p-8 text-center bg-white/50 border-b border-white/50">
+                <h1 class="text-3xl font-black text-blue-900 mb-1 uppercase italic tracking-tighter">Đăng Ký Khám Bệnh</h1>
+                <p class="text-emerald-600 font-bold text-sm italic uppercase tracking-widest">BV Ung Bướu TP.HCM - Cơ Sở 2</p>
+                <div class="h-1 w-20 bg-blue-600 mx-auto mt-3 rounded-full"></div>
             </div>
 
-            <div id="medIdField" class="hidden">
-                <label class="text-base font-bold text-blue-600 uppercase mb-2 block tracking-widest italic">Mã y tế (Nếu có)</label>
-                <input type="text" id="medicalId" class="input-animated w-full px-4 py-3 rounded-xl outline-none border-blue-100 text-lg" placeholder="Nhập mã số sổ khám bệnh cũ">
-            </div>
+            <form id="medicalForm" class="px-10 py-10 space-y-8" onsubmit="handleFinalSubmit(event)">
+                
+                <div>
+                    <label class="text-base font-bold text-slate-700 uppercase mb-4 block italic tracking-tight">Bạn đã từng khám tại đây chưa? *</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label onclick="document.getElementById('medIdField').classList.remove('hidden')" class="relative">
+                            <input type="radio" name="oldPatient" value="Có" class="absolute opacity-0 w-full h-full cursor-pointer">
+                            <div class="option-box">Có</div>
+                        </label>
+                        <label onclick="document.getElementById('medIdField').classList.add('hidden')" class="relative">
+                            <input type="radio" name="oldPatient" value="Không" checked class="absolute opacity-0 w-full h-full cursor-pointer">
+                            <div class="option-box">Không</div>
+                        </label>
+                    </div>
+                </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="col-span-2 md:col-span-1">
-                    <label class="text-base font-bold text-slate-700 uppercase mb-2 block italic">Họ và tên bệnh nhân *</label>
-                    <input type="text" id="fullname" required class="input-animated w-full px-4 py-3 rounded-xl outline-none uppercase text-lg" placeholder="NGUYỄN VĂN A">
+                <div id="medIdField" class="hidden animate-pulse">
+                    <label class="text-base font-bold text-blue-600 uppercase mb-2 block italic tracking-widest">Mã y tế (Nếu có)</label>
+                    <input type="text" id="medicalId" class="input-neumorphic w-full px-5 py-4 rounded-2xl outline-none" placeholder="Nhập mã số trên sổ khám cũ">
                 </div>
-                <div class="col-span-2 md:col-span-1">
-                    <label class="text-base font-bold text-slate-700 uppercase mb-2 block italic">Số điện thoại *</label>
-                    <input type="text" id="phone" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-animated w-full px-4 py-3 rounded-xl outline-none text-lg" placeholder="09xxxxxxxx">
-                </div>
-            </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-6">
                     <div>
-                        <label class="text-base font-bold text-slate-700 uppercase mb-2 block italic">Số CCCD/Định danh *</label>
-                        <input type="text" id="cccd" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-animated w-full px-4 py-3 rounded-xl outline-none text-lg" placeholder="Số căn cước">
+                        <label class="text-base font-bold text-slate-700 uppercase mb-2 block italic">Họ và tên bệnh nhân *</label>
+                        <input type="text" id="fullname" required class="input-neumorphic w-full px-5 py-4 rounded-2xl outline-none uppercase font-bold text-blue-900" placeholder="NGUYỄN VĂN A">
                     </div>
                     <div>
-                        <label class="text-sm font-bold text-slate-400 uppercase mb-1 block italic underline">Ngày cấp CCCD *</label>
-                        <input type="date" id="cccdDate" required class="input-animated w-full px-4 py-2 rounded-lg outline-none text-base">
+                        <label class="text-base font-bold text-slate-700 uppercase mb-2 block italic">Số điện thoại liên hệ *</label>
+                        <input type="text" id="phone" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-neumorphic w-full px-5 py-4 rounded-2xl outline-none font-bold" placeholder="09xxxxxxxx">
                     </div>
                 </div>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-base font-bold text-slate-700 uppercase mb-2 block italic">Năm sinh *</label>
-                        <input type="number" id="yob" required class="input-animated w-full px-4 py-3 rounded-xl outline-none text-lg" placeholder="Ví dụ: 1990">
+
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <label class="text-base font-bold text-slate-700 uppercase block italic">Số CCCD & Ngày cấp *</label>
+                        <input type="text" id="cccd" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-neumorphic w-full px-5 py-4 rounded-2xl outline-none font-bold" placeholder="12 số">
+                        <input type="date" id="cccdDate" required class="input-neumorphic w-full px-5 py-3 rounded-xl outline-none">
                     </div>
-                    <div>
-                        <label class="text-base font-bold text-slate-700 uppercase mb-2 block italic">Giới tính *</label>
-                        <select id="gender" required class="input-animated w-full px-4 py-3 rounded-xl outline-none bg-white text-lg">
+                    <div class="space-y-4">
+                        <label class="text-base font-bold text-slate-700 uppercase block italic">Năm sinh & Giới tính *</label>
+                        <input type="number" id="yob" required class="input-neumorphic w-full px-5 py-4 rounded-2xl outline-none font-bold" placeholder="Ví dụ: 1990">
+                        <select id="gender" required class="input-neumorphic w-full px-5 py-4 rounded-2xl outline-none bg-white font-bold text-blue-600">
                             <option value="Nam">Nam</option>
                             <option value="Nữ">Nữ</option>
                         </select>
                     </div>
                 </div>
-            </div>
 
-            <div>
-                <label class="text-base font-bold text-slate-700 uppercase mb-2 block italic">Địa chỉ thường trú (Theo Căn cước công dân) *</label>
-                <input type="text" id="address" required class="input-animated w-full px-4 py-3 rounded-xl outline-none text-lg" placeholder="Xã/Phường, Quận/Huyện, Tỉnh/Thành">
-            </div>
-
-            <div>
-                <label class="text-base font-bold text-red-500 uppercase mb-2 block italic">Lý do khám / Triệu chứng *</label>
-                <textarea id="symptoms" required rows="3" class="input-animated w-full px-4 py-3 rounded-xl outline-none text-lg" placeholder="Mô tả cụ thể triệu chứng hiện tại..."></textarea>
-            </div>
-
-            <div>
-                <label class="text-base font-bold text-blue-600 uppercase mb-2 block tracking-wider italic">Ngày & Giờ dự kiến khám *</label>
-                <input type="datetime-local" id="visitTime" required class="input-animated w-full px-4 py-3 rounded-xl outline-none text-lg">
-            </div>
-
-            <div class="space-y-6 border-t pt-6 border-dashed border-gray-200">
                 <div>
-                    <label class="text-base font-bold text-slate-700 uppercase mb-3 block italic">Sử dụng BHYT? *</label>
-                    <div class="grid grid-cols-2 gap-3 mb-4">
-                        <label onclick="renderServices(true)" class="relative"><input type="radio" name="isBHYT" value="Có" class="absolute opacity-0 w-full h-full cursor-pointer"><div class="option-box">Có BHYT</div></label>
-                        <label onclick="renderServices(false)" class="relative"><input type="radio" name="isBHYT" value="Không" checked class="absolute opacity-0 w-full h-full cursor-pointer"><div class="option-box">Không (Viện phí)</div></label>
-                    </div>
-                    <div id="service_options_container" class="grid grid-cols-1 gap-2">
-                        </div>
+                    <label class="text-base font-bold text-slate-700 uppercase mb-2 block italic">Địa chỉ thường trú (Theo CCCD) *</label>
+                    <input type="text" id="address" required class="input-neumorphic w-full px-5 py-4 rounded-2xl outline-none" placeholder="Xã/Phường, Quận/Huyện, Tỉnh">
                 </div>
-            </div>
 
-            <button type="submit" id="submitBtn" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase tracking-widest hover:bg-slate-800 transition shadow-xl active:scale-95 text-xl italic">
-                Xác nhận gửi hồ sơ
-            </button>
-        </form>
+                <div>
+                    <label class="text-base font-bold text-red-600 uppercase mb-2 block italic">Lý do khám / Triệu chứng lâm sàng *</label>
+                    <textarea id="symptoms" required rows="2" class="input-neumorphic w-full px-5 py-4 rounded-2xl outline-none italic" placeholder="Mô tả sơ lược tình trạng sức khỏe..."></textarea>
+                </div>
+
+                <div class="bg-emerald-50 p-6 rounded-[2rem] border border-emerald-100 shadow-inner">
+                    <label class="text-base font-bold text-emerald-700 uppercase mb-3 block italic tracking-tighter">Ngày & Giờ bạn muốn đến khám *</label>
+                    <input type="datetime-local" id="visitTime" required class="input-neumorphic w-full px-5 py-4 rounded-2xl outline-none font-black text-blue-900">
+                </div>
+
+                <div class="border-t border-slate-200 pt-6">
+                    <label class="text-base font-bold text-slate-700 uppercase mb-4 block italic underline decoration-blue-500">Sử dụng bảo hiểm y tế? *</label>
+                    <div class="grid grid-cols-2 gap-4 mb-5">
+                        <label onclick="renderServices(true)" class="relative">
+                            <input type="radio" name="isBHYT" value="Có" class="absolute opacity-0 w-full h-full cursor-pointer">
+                            <div class="option-box font-bold">CÓ</div>
+                        </label>
+                        <label onclick="renderServices(false)" class="relative">
+                            <input type="radio" name="isBHYT" value="Không" checked class="absolute opacity-0 w-full h-full cursor-pointer">
+                            <div class="option-box font-bold">KHÔNG</div>
+                        </label>
+                    </div>
+                    <div id="service_options_container" class="grid grid-cols-1 gap-3"></div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-submit w-full text-white py-6 rounded-3xl font-black uppercase transition shadow-2xl text-2xl italic tracking-widest">
+                    Xác nhận gửi hồ sơ
+                </button>
+            </form>
+        </div>
     </div>
 
     <script>
         const conf = { databaseURL: "https://tbkxnub-default-rtdb.asia-southeast1.firebasedatabase.app/" };
         firebase.initializeApp(conf);
         const db = firebase.database();
-
-        function toggleMedIdField(isOld) {
-            document.getElementById('medIdField').classList.toggle('hidden', !isOld);
-        }
 
         function renderServices(isBHYT) {
             const container = document.getElementById('service_options_container');
@@ -131,51 +188,56 @@
                 "BHYT DV (7h30-12h, 13h-16h30)",
                 "BHYT ngoài giờ (5h-7h30)"
             ] : [
-                "Viện phí (VP)",
+                "VP trong giờ (7h30-12h, 13h-16h30)",
                 "DV trong giờ (7h30-12h, 13h-16h30)",
                 "DV ngoài giờ (5h-7h30)"
             ];
-
             services.forEach(s => {
                 container.innerHTML += `
                     <label class="relative">
                         <input type="radio" name="serviceDetail" value="${s}" required class="absolute opacity-0">
-                        <div class="option-box text-left text-base italic">${s}</div>
-                    </label>
-                `;
+                        <div class="option-box text-left text-base italic px-6 py-4">${s}</div>
+                    </label>`;
             });
         }
-
         renderServices(false);
 
-        function handleFinalSubmit(e) {
+        async function handleFinalSubmit(e) {
             e.preventDefault();
-            const serviceDetail = document.querySelector('input[name="serviceDetail"]:checked');
-            if(!serviceDetail) return alert("Vui lòng chọn khung giờ khám!");
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = "Hệ thống đang lưu hồ sơ...";
 
-            const data = {
-                name: document.getElementById('fullname').value.toUpperCase(),
-                phone: document.getElementById('phone').value,
-                cccd: document.getElementById('cccd').value,
-                cccdDate: document.getElementById('cccdDate').value,
-                yob: document.getElementById('yob').value,
-                gender: document.getElementById('gender').value,
-                address: document.getElementById('address').value,
-                symptoms: document.getElementById('symptoms').value,
-                oldPatient: document.querySelector('input[name="oldPatient"]:checked').value,
-                medicalId: document.getElementById('medicalId').value || "N/A",
-                visitTime: document.getElementById('visitTime').value,
-                isBHYT: document.querySelector('input[name="isBHYT"]:checked').value,
-                serviceDetail: serviceDetail.value,
-                status: 'Chờ xử lý',
-                time: new Date().toLocaleString('vi-VN'),
-                timestamp: Date.now()
-            };
+            try {
+                const data = {
+                    name: document.getElementById('fullname').value.toUpperCase(),
+                    phone: document.getElementById('phone').value,
+                    cccd: document.getElementById('cccd').value,
+                    cccdDate: document.getElementById('cccdDate').value,
+                    address: document.getElementById('address').value,
+                    yob: document.getElementById('yob').value,
+                    gender: document.getElementById('gender').value,
+                    symptoms: document.getElementById('symptoms').value,
+                    visitTime: document.getElementById('visitTime').value,
+                    oldPatient: document.querySelector('input[name="oldPatient"]:checked').value,
+                    medicalId: document.getElementById('medicalId').value || "N/A",
+                    serviceDetail: document.querySelector('input[name="serviceDetail"]:checked').value,
+                    isBHYT: document.querySelector('input[name="isBHYT"]:checked').value,
+                    imgFrontUrl: "N/A", // Đã xóa tính năng tải ảnh
+                    imgBackUrl: "N/A",
+                    status: 'Chờ xử lý',
+                    time: new Date().toLocaleString('vi-VN'),
+                    timestamp: Date.now()
+                };
 
-            db.ref('patients').push(data).then(() => {
-                alert('Đăng ký thành công!');
+                await db.ref('patients').push(data);
+                alert('Hồ sơ của bạn đã được đăng ký thành công!');
                 window.location.reload();
-            });
+            } catch (err) {
+                alert("Lỗi kết nối. Vui lòng kiểm tra mạng!");
+                btn.disabled = false;
+                btn.innerHTML = "Xác nhận gửi hồ sơ";
+            }
         }
     </script>
 </body>

@@ -16,7 +16,6 @@
             background-position: center;
         }
 
-        /* Hiệu ứng chuyển động nhẹ khi vào trang */
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -30,27 +29,48 @@
             padding: 20px 12px;
         }
 
-        /* Card có chiều sâu mềm mại */
         .neumorphic-card {
             background: rgba(255, 255, 255, 0.94);
             border-radius: 24px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
-        /* Input tối ưu cho Mobile */
         .input-neumorphic {
             background: #ffffff;
             border: 1px solid #cbd5e1;
             transition: all 0.2s ease;
-            -webkit-appearance: none; /* Tránh style mặc định của iOS */
+            position: relative;
         }
+        
+        /* Fix cho iPhone: Hiển thị placeholder cho input date/datetime */
+        input[type="date"]:before {
+            content: attr(placeholder);
+            color: #94a3b8;
+            margin-right: 0.5em;
+        }
+        input[type="date"]:focus:before,
+        input[type="date"]:valid:before {
+            content: "";
+            display: none;
+        }
+
+        input[type="datetime-local"]:before {
+            content: attr(placeholder);
+            color: #94a3b8;
+            margin-right: 0.5em;
+        }
+        input[type="datetime-local"]:focus:before,
+        input[type="datetime-local"]:valid:before {
+            content: "";
+            display: none;
+        }
+
         .input-neumorphic:focus {
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
             outline: none;
         }
 
-        /* Lựa chọn Radio mượt mà */
         .option-box {
             cursor: pointer;
             border: 1.5px solid #e2e8f0;
@@ -66,19 +86,13 @@
             background: #eff6ff;
             color: #2563eb;
             font-weight: bold;
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
         }
 
-        /* Nút xác nhận thu gọn lại cho tinh tế */
         .btn-submit {
             background: linear-gradient(135deg, #1e293b, #334155);
             transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-        .btn-submit:active {
-            transform: scale(0.98);
-            filter: brightness(1.1);
-        }
+        .btn-submit:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -106,7 +120,7 @@
                     </div>
                 </div>
 
-                <div id="medIdField" class="hidden transition-all duration-300">
+                <div id="medIdField" class="hidden">
                     <input type="text" id="medicalId" class="input-neumorphic w-full px-4 py-3 rounded-xl text-sm" placeholder="Nhập mã y tế trên sổ khám cũ">
                 </div>
 
@@ -124,8 +138,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-slate-600 uppercase italic ml-1">Số CCCD & Ngày cấp *</label>
-                        <input type="text" id="cccd" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-neumorphic w-full px-4 py-3 rounded-xl font-bold" placeholder="12 số">
-                        <input type="date" id="cccdDate" required class="input-neumorphic w-full px-4 py-2 rounded-xl text-sm">
+                        <input type="text" id="cccd" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-neumorphic w-full px-4 py-3 rounded-xl font-bold mb-2" placeholder="Nhập 12 số CCCD">
+                        <input type="date" id="cccdDate" required placeholder="Chọn ngày cấp CCCD" class="input-neumorphic w-full px-4 py-3 rounded-xl text-sm min-h-[50px]">
                     </div>
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-slate-600 uppercase italic ml-1">Năm sinh & Giới tính *</label>
@@ -149,7 +163,7 @@
 
                 <div class="bg-blue-50/70 p-4 rounded-2xl border border-blue-100">
                     <label class="text-sm font-bold text-blue-800 uppercase italic mb-2 block">Ngày & Giờ muốn đến khám *</label>
-                    <input type="datetime-local" id="visitTime" required class="input-neumorphic w-full px-4 py-3 rounded-xl font-bold text-blue-900 border-none">
+                    <input type="datetime-local" id="visitTime" required placeholder="Bấm để chọn lịch khám" class="input-neumorphic w-full px-4 py-3 rounded-xl font-bold text-blue-900 min-h-[50px]">
                 </div>
 
                 <div class="pt-2">
@@ -171,7 +185,7 @@
                     <button type="submit" id="submitBtn" class="btn-submit w-full text-white py-4 rounded-2xl font-black uppercase text-lg italic tracking-widest">
                         Gửi hồ sơ đăng ký
                     </button>
-                    <p class="text-center text-[10px] text-slate-400 mt-3 font-bold uppercase tracking-tighter">Hệ thống bảo mật thông tin bệnh nhân</p>
+                    <p class="text-center text-[10px] text-slate-400 mt-3 font-bold uppercase tracking-tighter">Bệnh viện sẽ liên hệ xác nhận sớm nhất</p>
                 </div>
             </form>
         </div>
@@ -185,15 +199,7 @@
         function renderServices(isBHYT) {
             const container = document.getElementById('service_options_container');
             container.innerHTML = "";
-            const services = isBHYT ? [
-                "BHYT tế trong giờ (7h30-16h30)",
-                "BHYT Dịch vụ (7h30-16h30)",
-                "BHYT ngoài giờ (5h-7h30)"
-            ] : [
-                "Viện phí trong giờ (7h30-16h30)",
-                "Dịch vụ trong giờ (7h30-16h30)",
-                "Dịch vụ ngoài giờ (5h-7h30)"
-            ];
+            const services = isBHYT ? ["BHYT tế trong giờ (7h30-16h30)", "BHYT Dịch vụ (7h30-16h30)", "BHYT ngoài giờ (5h-7h30)"] : ["Viện phí trong giờ (7h30-16h30)", "Dịch vụ trong giờ (7h30-16h30)", "Dịch vụ ngoài giờ (5h-7h30)"];
             services.forEach(s => {
                 container.innerHTML += `
                     <label class="relative block">
@@ -207,9 +213,7 @@
         async function handleFinalSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.innerHTML = "Đang lưu...";
-
+            btn.disabled = true; btn.innerHTML = "Đang lưu...";
             try {
                 const data = {
                     name: document.getElementById('fullname').value.toUpperCase(),
@@ -229,14 +233,10 @@
                     time: new Date().toLocaleString('vi-VN'),
                     timestamp: Date.now()
                 };
-
                 await db.ref('patients').push(data);
-                alert('Đăng ký thành công!');
-                window.location.reload();
+                alert('Đăng ký thành công!'); window.location.reload();
             } catch (err) {
-                alert("Lỗi kết nối mạng!");
-                btn.disabled = false;
-                btn.innerHTML = "Gửi hồ sơ đăng ký";
+                alert("Lỗi kết nối mạng!"); btn.disabled = false; btn.innerHTML = "Gửi hồ sơ đăng ký";
             }
         }
     </script>

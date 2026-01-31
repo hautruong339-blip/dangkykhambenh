@@ -24,60 +24,63 @@
         }
 
         .neumorphic-card {
-            background: rgba(255, 255, 255, 0.96);
-            border-radius: 24px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         }
 
-        /* Tối ưu ô nhập liệu cho iPhone */
-        .input-neumorphic {
+        /* Group các input để chống nhảy hàng trên iPhone */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-control {
+            width: 100%;
+            height: 50px; /* Chiều cao chuẩn cho Mobile */
+            padding: 0 16px;
             background: #ffffff;
             border: 1px solid #cbd5e1;
-            display: flex;
-            align-items: center;
-            appearance: none;
-            -webkit-appearance: none;
-            min-height: 52px; /* Cố định chiều cao để không bị dẹt trên IP */
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            display: block;
+            -webkit-appearance: none; /* Reset Safari */
         }
 
-        /* Fix lỗi ô trắng trên Safari/iPhone */
+        /* Fix riêng cho date/datetime trên iPhone không bị dẹt/trắng */
         input[type="date"], input[type="datetime-local"] {
+            min-height: 50px;
+            line-height: 50px;
             position: relative;
         }
 
-        input[type="date"]::before {
-            content: attr(placeholder);
+        /* Tạo chữ hướng dẫn mờ cho iPhone khi chưa có dữ liệu */
+        input[type="date"]:invalid:before,
+        input[type="datetime-local"]:invalid:before {
+            content: attr(data-placeholder);
             color: #94a3b8;
-            width: 100%;
             position: absolute;
             left: 16px;
         }
 
-        input[type="datetime-local"]::before {
-            content: attr(placeholder);
-            color: #94a3b8;
-            width: 100%;
-            position: absolute;
-            left: 16px;
-        }
-
-        /* Ẩn placeholder khi có dữ liệu hoặc đang focus */
-        input[type="date"]:focus::before,
-        input[type="date"]:valid::before,
-        input[type="datetime-local"]:focus::before,
-        input[type="datetime-local"]:valid::before {
-            content: "";
-            display: none;
+        .input-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .option-box {
             cursor: pointer;
             border: 1.5px solid #e2e8f0;
             border-radius: 12px;
-            padding: 10px;
+            padding: 12px;
             background: white;
             transition: 0.2s;
+            text-align: center;
+            font-size: 14px;
         }
+
         input[type="radio"]:checked + .option-box {
             border-color: #2563eb;
             background: #eff6ff;
@@ -87,101 +90,104 @@
 
         .btn-submit {
             background: linear-gradient(135deg, #1e293b, #334155);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            height: 56px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
     <div class="glass-overlay">
         <div class="max-w-xl mx-auto neumorphic-card overflow-hidden">
-            <div class="p-6 text-center bg-white/50 border-b border-gray-100">
-                <h1 class="text-2xl font-black text-blue-900 uppercase italic tracking-tighter">Đăng Ký Khám Bệnh</h1>
-                <p class="text-emerald-600 font-bold text-xs italic uppercase tracking-widest mt-1">BV Ung Bướu TP.HCM - Cơ Sở 2</p>
-                <div class="h-1 w-12 bg-blue-600 mx-auto mt-3 rounded-full"></div>
+            <div class="p-5 text-center bg-white/50 border-b border-gray-100">
+                <h1 class="text-xl font-black text-blue-900 uppercase italic">Đăng Ký Khám Bệnh</h1>
+                <p class="text-emerald-600 font-bold text-[10px] italic uppercase tracking-widest mt-1">BV Ung Bướu TP.HCM - Cơ Sở 2</p>
             </div>
 
-            <form id="medicalForm" class="p-5 md:p-8 space-y-6" onsubmit="handleFinalSubmit(event)">
+            <form id="medicalForm" class="p-5 space-y-5" onsubmit="handleFinalSubmit(event)">
                 
-                <div class="space-y-3">
-                    <label class="text-sm font-bold text-slate-700 uppercase italic">Tiền sử khám bệnh *</label>
+                <div class="input-group">
+                    <label class="text-xs font-bold text-slate-700 uppercase italic ml-1">Bạn đã từng khám chưa? *</label>
                     <div class="grid grid-cols-2 gap-3">
                         <label onclick="document.getElementById('medIdField').classList.remove('hidden')" class="relative">
-                            <input type="radio" name="oldPatient" value="Có" class="absolute opacity-0 w-full h-full cursor-pointer">
-                            <div class="option-box text-center">Đã từng khám</div>
+                            <input type="radio" name="oldPatient" value="Có" class="absolute opacity-0 w-full h-full">
+                            <div class="option-box">Đã từng khám</div>
                         </label>
                         <label onclick="document.getElementById('medIdField').classList.add('hidden')" class="relative">
-                            <input type="radio" name="oldPatient" value="Không" checked class="absolute opacity-0 w-full h-full cursor-pointer">
-                            <div class="option-box text-center">Khám lần đầu</div>
+                            <input type="radio" name="oldPatient" value="Không" checked class="absolute opacity-0 w-full h-full">
+                            <div class="option-box">Khám lần đầu</div>
                         </label>
                     </div>
                 </div>
 
                 <div id="medIdField" class="hidden">
-                    <input type="text" id="medicalId" class="input-neumorphic w-full px-4 rounded-xl text-sm" placeholder="Nhập mã y tế cũ">
+                    <input type="text" id="medicalId" class="input-control" placeholder="Nhập mã y tế cũ">
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-1">
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="input-group">
                         <label class="text-xs font-bold text-slate-600 uppercase italic ml-1">Họ và tên *</label>
-                        <input type="text" id="fullname" required class="input-neumorphic w-full px-4 rounded-xl outline-none uppercase font-bold text-blue-900" placeholder="NGUYỄN VĂN A">
+                        <input type="text" id="fullname" required class="input-control font-bold text-blue-900 uppercase" placeholder="NGUYỄN VĂN A">
                     </div>
-                    <div class="space-y-1">
+                    <div class="input-group">
                         <label class="text-xs font-bold text-slate-600 uppercase italic ml-1">Số điện thoại *</label>
-                        <input type="text" id="phone" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-neumorphic w-full px-4 rounded-xl font-bold" placeholder="09xxxxxxxx">
+                        <input type="text" id="phone" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-control font-bold" placeholder="09xxxxxxxx">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-2">
+                    <div class="input-group">
                         <label class="text-xs font-bold text-slate-600 uppercase italic ml-1">Số CCCD & Ngày cấp *</label>
-                        <input type="text" id="cccd" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-neumorphic w-full px-4 rounded-xl font-bold mb-1" placeholder="Nhập 12 số CCCD">
-                        <input type="date" id="cccdDate" required placeholder="Bấm chọn ngày cấp CCCD" class="input-neumorphic w-full px-4 rounded-xl text-sm">
+                        <input type="text" id="cccd" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-control font-bold mb-2" placeholder="Nhập 12 số CCCD">
+                        <input type="date" id="cccdDate" required data-placeholder="Chọn ngày cấp CCCD" class="input-control">
                     </div>
-                    <div class="space-y-2">
+                    <div class="input-group">
                         <label class="text-xs font-bold text-slate-600 uppercase italic ml-1">Năm sinh & Giới tính *</label>
-                        <input type="number" id="yob" required class="input-neumorphic w-full px-4 rounded-xl font-bold" placeholder="Ví dụ: 1990">
-                        <select id="gender" required class="input-neumorphic w-full px-4 rounded-xl bg-white font-bold text-blue-600">
+                        <input type="number" id="yob" required class="input-control font-bold mb-2" placeholder="Năm sinh: 1990">
+                        <select id="gender" required class="input-control font-bold text-blue-600">
                             <option value="Nam">Nam</option>
                             <option value="Nữ">Nữ</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="space-y-1">
+                <div class="input-group">
                     <label class="text-xs font-bold text-slate-600 uppercase italic ml-1">Địa chỉ thường trú *</label>
-                    <input type="text" id="address" required class="input-neumorphic w-full px-4 rounded-xl text-sm" placeholder="Phường, Quận, Tỉnh/TP">
+                    <input type="text" id="address" required class="input-control" placeholder="Số nhà, Phường, Quận, Tỉnh/TP">
                 </div>
 
-                <div class="space-y-1">
+                <div class="input-group">
                     <label class="text-xs font-bold text-red-600 uppercase italic ml-1">Lý do khám / Triệu chứng *</label>
-                    <textarea id="symptoms" required rows="2" class="input-neumorphic w-full px-4 py-3 rounded-xl text-sm italic" placeholder="Mô tả ngắn gọn tình trạng sức khỏe..."></textarea>
+                    <textarea id="symptoms" required rows="2" class="input-control !h-auto py-3 italic" placeholder="Mô tả sơ lược triệu chứng..."></textarea>
                 </div>
 
-                <div class="bg-blue-50/70 p-4 rounded-2xl border border-blue-100">
+                <div class="bg-blue-50/70 p-4 rounded-xl border border-blue-100">
                     <label class="text-sm font-bold text-blue-800 uppercase italic mb-2 block">Ngày & Giờ muốn đến khám *</label>
-                    <input type="datetime-local" id="visitTime" required placeholder="Bấm để chọn lịch khám bệnh" class="input-neumorphic w-full px-4 rounded-xl font-bold text-blue-900 border-none">
+                    <input type="datetime-local" id="visitTime" required data-placeholder="Bấm chọn lịch khám bệnh" class="input-control font-bold text-blue-900 !border-blue-200">
                 </div>
 
-                <div class="pt-2">
-                    <label class="text-sm font-bold text-slate-700 uppercase italic mb-3 block underline decoration-blue-400">Có sử dụng BHYT? *</label>
-                    <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="input-group">
+                    <label class="text-sm font-bold text-slate-700 uppercase italic mb-2 block">Có sử dụng BHYT? *</label>
+                    <div class="grid grid-cols-2 gap-3 mb-2">
                         <label onclick="renderServices(true)" class="relative">
-                            <input type="radio" name="isBHYT" value="Có" class="absolute opacity-0 w-full h-full cursor-pointer">
-                            <div class="option-box text-center">CÓ</div>
+                            <input type="radio" name="isBHYT" value="Có" class="absolute opacity-0 w-full h-full">
+                            <div class="option-box">CÓ</div>
                         </label>
                         <label onclick="renderServices(false)" class="relative">
-                            <input type="radio" name="isBHYT" value="Không" checked class="absolute opacity-0 w-full h-full cursor-pointer">
-                            <div class="option-box text-center">KHÔNG</div>
+                            <input type="radio" name="isBHYT" value="Không" checked class="absolute opacity-0 w-full h-full">
+                            <div class="option-box">KHÔNG</div>
                         </label>
                     </div>
                     <div id="service_options_container" class="space-y-2"></div>
                 </div>
 
-                <div class="pt-4 pb-2">
-                    <button type="submit" id="submitBtn" class="btn-submit w-full text-white py-4 rounded-2xl font-black uppercase text-lg italic tracking-widest">
-                        Gửi hồ sơ đăng ký
-                    </button>
-                    <p class="text-center text-[10px] text-slate-400 mt-3 font-bold uppercase tracking-tighter italic">Vui lòng kiểm tra kỹ trước khi gửi</p>
+                <div class="pt-2">
+                    <button type="submit" id="submitBtn" class="btn-submit w-full">Gửi hồ sơ đăng ký</button>
+                    <p class="text-center text-[9px] text-slate-400 mt-3 font-bold uppercase italic">Vui lòng kiểm tra kỹ thông tin trước khi gửi</p>
                 </div>
             </form>
         </div>
@@ -195,13 +201,9 @@
         function renderServices(isBHYT) {
             const container = document.getElementById('service_options_container');
             container.innerHTML = "";
-            const services = isBHYT ? ["BHYT tế trong giờ (7h30-16h30)", "BHYT Dịch vụ (7h30-16h30)", "BHYT ngoài giờ (5h-7h30)"] : ["Viện phí trong giờ (7h30-16h30)", "Dịch vụ trong giờ (7h30-16h30)", "Dịch vụ ngoài giờ (5h-7h30)"];
+            const services = isBHYT ? ["BHYT trong giờ (7h30-16h30)", "BHYT Dịch vụ (7h30-16h30)", "BHYT ngoài giờ (5h-7h30)"] : ["Viện phí trong giờ (7h30-16h30)", "Dịch vụ trong giờ (7h30-16h30)", "Dịch vụ ngoài giờ (5h-7h30)"];
             services.forEach(s => {
-                container.innerHTML += `
-                    <label class="relative block">
-                        <input type="radio" name="serviceDetail" value="${s}" required class="absolute opacity-0">
-                        <div class="option-box text-left text-xs italic px-4 py-3">${s}</div>
-                    </label>`;
+                container.innerHTML += `<label class="relative block"><input type="radio" name="serviceDetail" value="${s}" required class="absolute opacity-0"><div class="option-box text-left text-xs italic px-4 py-3">${s}</div></label>`;
             });
         }
         renderServices(false);
@@ -209,7 +211,7 @@
         async function handleFinalSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.disabled = true; btn.innerHTML = "Hệ thống đang lưu...";
+            btn.disabled = true; btn.innerHTML = "ĐANG LƯU HỒ SƠ...";
             try {
                 const data = {
                     name: document.getElementById('fullname').value.toUpperCase(),
@@ -231,9 +233,7 @@
                 };
                 await db.ref('patients').push(data);
                 alert('Đăng ký thành công!'); window.location.reload();
-            } catch (err) {
-                alert("Lỗi kết nối! Vui lòng thử lại."); btn.disabled = false; btn.innerHTML = "Gửi hồ sơ đăng ký";
-            }
+            } catch (err) { alert("Lỗi kết nối mạng!"); btn.disabled = false; btn.innerHTML = "Gửi hồ sơ đăng ký"; }
         }
     </script>
 </body>
